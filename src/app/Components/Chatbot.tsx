@@ -17,9 +17,6 @@ type Message = {
 };
 
 const Chatbot = () => {
-  
-  const key = "ae7ExYTn5llboW4EOyQ2UxQa0Si932nZ"
- 
 
   const { messages, input, handleInputChange, handleSubmit } = useChat();
 
