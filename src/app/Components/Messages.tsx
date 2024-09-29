@@ -4,7 +4,7 @@ import chatBotImage from '../../public/chatbot.svg'
 
 interface Message {
   message: string;
-  sender: 'user' | 'chatBot';
+  sender: any;
 }
 
 

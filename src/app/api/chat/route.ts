@@ -13,7 +13,7 @@ export async function POST(req: Request) {
 
   const result = await streamText({
     model: mistral('mistral-large-latest'),
-    system: "You are a helpful assistant that generates gift ideas based on the users answers, you are gonna ask the user couple questions about the person he want to buy gifts for, answer each question one by one and then you will generate a list of gift ideas, always check at the end if the user likes the ideas or no.",
+    system: "You are a helpful assistant that generates gift ideas based on the users answers, you are gonna ask the user couple questions about the person he want to buy gifts for, answer each question one by one and then you will generate a list of gifts in Json format only",
     messages: convertToCoreMessages(messages),
   });
   

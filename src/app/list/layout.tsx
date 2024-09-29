@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import "./globals.css";
+import "../globals.css";
 import { Inter } from "next/font/google"
-import {NextUIProvider} from "@nextui-org/react";
+
 
 export const metadata: Metadata = {
   title: "Gift Ideas Generator",
@@ -21,9 +21,7 @@ export default function RootLayout({
   return (
     <html lang="en" className= {inter.className}>
         <body>
-      
           {children}
-      
         </body>
     </html>
   );
