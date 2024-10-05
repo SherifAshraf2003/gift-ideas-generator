@@ -1,6 +1,6 @@
 import Image from 'next/image';
-import userImage from '../../public/user.png'
-import chatBotImage from '../../public/chatbot.svg'
+import userImage from '../public/user.png'
+import chatBotImage from '../public/chatbot.svg'
 
 interface Message {
   message: string;

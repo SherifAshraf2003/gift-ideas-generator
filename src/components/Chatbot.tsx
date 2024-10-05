@@ -1,7 +1,7 @@
 import Messages from "./Messages";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import sendImage from "../../public/send.png";
+import sendImage from "../public/send.png";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { Mistral } from "@mistralai/mistralai";
