@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { Inter } from "next/font/google"
-import {NextUIProvider} from "@nextui-org/react";
+import { Inter } from "next/font/google";
+import { NextUIProvider } from "@nextui-org/react";
+import { Toaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
   title: "Gift Ideas Generator",
@@ -11,7 +12,7 @@ export const metadata: Metadata = {
 const inter = Inter({
   subsets: ["latin"],
   display: "swap",
-})
+});
 
 export default function RootLayout({
   children,
@@ -19,10 +20,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className= {inter.className}>
-        <body>
-          {children}
-        </body>
+    <html lang="en" className={inter.className}>
+      <body className="flex items-center justify-center flex-col h-[100vh] bg-gradient-to-r from-gradientFrom to-gradientTo ">
+        <Toaster />
+        <main>{children}</main>
+      </body>
     </html>
   );
 }

@@ -11,15 +11,23 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
-import { useQuizStore } from "@/lib/store";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
+import useSWR from "swr";
+import axios from "axios";
+
+interface Answers {
+  question: string;
+  answer: string;
+}
 
 const Quiz = () => {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const data = searchParams.get("data");
   const [questionNum, setQuestionNum] = useState(0);
   const [answer, setAnswer] = useState("");
-  const [answers, setAnswers] = useState({}); // State to hold answers
+  const [answers, setAnswers] = useState<Answers[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   let questions = [];
 
   try {
@@ -28,22 +36,69 @@ const Quiz = () => {
     console.error("Error parsing questions:", e);
   }
 
-  questions = questions.questions || []; // Ensure questions is an array
+  useEffect(() => {
+    const prompt = answers
+      .map((answer) => {
+        return `Question: ${answer.question}\nAnswer: ${answer.answer}`;
+      })
+      .join("\n");
+    console.log(prompt);
+  }, [answers]);
+
+  questions = questions.questions || [];
   const numberOfQuestions = questions.length;
 
-  const nextQuestion = () => {
-    setAnswers((prevAnswers) => ({
-      ...prevAnswers,
-      [questions[questionNum].question]: answer,
-    }));
-    console.log(answers);
+  const nextQuestion = async () => {
+    const object: Answers = {
+      question: questions[questionNum].question,
+      answer: answer,
+    };
+
+    setAnswers((prevAnswers) => {
+      const updatedAnswers = [...prevAnswers];
+
+      if (updatedAnswers[questionNum]) {
+        updatedAnswers[questionNum] = object;
+      } else {
+        updatedAnswers.push(object);
+      }
+
+      return updatedAnswers;
+    });
+
     if (questionNum === numberOfQuestions - 1) {
-      setAnswers((prevAnswers) => ({
-        ...prevAnswers,
-        [questions[questionNum].question]: answer,
-      }));
+      try {
+        setIsLoading(true);
+        const list = await axios.post("/api/chatbot", { answers });
+        const urlData = encodeURIComponent(
+          JSON.stringify(
+            JSON.parse(
+              list.data.result.responseMessages[0].content[0].text
+                .replace("```", "")
+                .replace("json", "")
+                .replace("```", "")
+            )
+          )
+        );
+        console.log(
+          JSON.stringify(
+            JSON.parse(
+              list.data.result.responseMessages[0].content[0].text
+                .replace("```", "")
+                .replace("json", "")
+                .replace("```", "")
+            )
+          )
+        );
+        setIsLoading(false);
+        router.push(`/list?data=${urlData}`);
+      } catch (e) {
+        throw new Error("Error submitting answers");
+      }
+
       return;
     }
+
     setAnswer("");
     setQuestionNum(questionNum + 1);
   };
@@ -52,11 +107,11 @@ const Quiz = () => {
     if (questionNum === 0) {
       return;
     }
-    setQuestionNum(questionNum - 1); // Go back to the previous question
+    setQuestionNum(questionNum - 1);
   };
 
   return (
-    <section className="flex items-center justify-center flex-col h-[100vh] bg-gradient-to-r from-gradientFrom to-gradientTo">
+    <>
       <Card className="max-w-[650px] w-[650px]">
         <CardHeader>
           <CardTitle className="text-3xl">Gift Ideas Generator</CardTitle>
@@ -97,11 +152,19 @@ const Quiz = () => {
             Previous
           </Button>
           <Button onClick={nextQuestion}>
-            {questionNum === numberOfQuestions - 1 ? "Submit" : "Next"}
+            {questionNum === numberOfQuestions - 1 ? (
+              isLoading ? (
+                <div className="loading"></div>
+              ) : (
+                "Submit"
+              )
+            ) : (
+              "Next"
+            )}
           </Button>
         </CardFooter>
       </Card>
-    </section>
+    </>
   );
 };
 
