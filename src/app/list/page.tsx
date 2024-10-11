@@ -37,7 +37,7 @@ const list = () => {
   const searchParams = useSearchParams();
   const searchData = searchParams.get("data");
   const [list, setList] = useState<any[]>(() => {
-    if (typeof window !== "undefined") {
+    if (typeof window !== "undefined" && searchData) {
       const storedList = localStorage.getItem(searchData);
       return storedList ? JSON.parse(storedList) : [];
     }
@@ -45,15 +45,21 @@ const list = () => {
   });
   const [isloading, setIsLoading] = useState(true);
   const [ctr, setCtr] = useState(0);
-  const [items, setItems] = useState(
-    searchData
-      ? JSON.parse(
+  const [items, setItems] = useState(() => {
+    if (searchData) {
+      try {
+        return JSON.parse(
           decodeURIComponent(searchData)
             .replace(`{"gift_ideas":`, "")
             .slice(0, -1)
-        )
-      : []
-  );
+        );
+      } catch (error) {
+        console.error("Error parsing searchData:", error);
+        return [];
+      }
+    }
+    return [];
+  });
 
   const fetchInProgress = useRef(false);
 
@@ -71,6 +77,7 @@ const list = () => {
       const delay = (ms: number) =>
         new Promise((resolve) => setTimeout(resolve, ms));
       const newList = [];
+      console.log(items);
 
       try {
         if (items.length === 0) {
@@ -90,7 +97,9 @@ const list = () => {
         }
 
         setList(newList);
-        localStorage.setItem(searchData, JSON.stringify(newList));
+        if (searchData) {
+          localStorage.setItem(searchData, JSON.stringify(newList));
+        }
         setIsLoading(false);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -100,7 +109,7 @@ const list = () => {
     };
 
     fetchData();
-  }, []);
+  }, [items, searchData]);
 
   function StarRating({ rating }: { rating: any }) {
     const fullStars = Math.floor(rating);
