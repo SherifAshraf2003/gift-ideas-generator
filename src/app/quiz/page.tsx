@@ -12,7 +12,6 @@ import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import useSWR from "swr";
 import axios from "axios";
 
 interface Answers {
@@ -91,7 +90,7 @@ const Quiz = () => {
           )
         );
         setIsLoading(false);
-        router.push(`/list?data=${urlData}`);
+        router.push(`/List?data=${urlData}`);
       } catch (e) {
         throw new Error("Error submitting answers");
       }

@@ -1,14 +1,10 @@
 "use client";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ChevronRight } from "lucide-react";
-import { useEffect, useState } from "react";
 import axios from "axios";
-import { useQuizStore } from "@/lib/store";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import useSWR from "swr";
-import { divider } from "@nextui-org/react";
 
 const Home = () => {
   const router = useRouter();
@@ -24,7 +20,7 @@ const Home = () => {
             .replace("```", "")
         )
       );
-  const { data, error, isLoading } = useSWR("api/chatbot", fetcher);
+  const { data, isLoading } = useSWR("api/chatbot", fetcher);
 
   // useEffect(() => {
   //   const getQuestions = async () => {

@@ -1,30 +1,13 @@
 import Messages from "./Messages";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import sendImage from "../public/send.png";
 import Image from "next/image";
-import { useState, useEffect } from "react";
-import { Mistral } from "@mistralai/mistralai";
-import { remark } from "remark";
-import html from "remark-html";
 import { useChat } from "ai/react";
 import { useRouter } from "next/navigation";
 
-type Message = {
-  text: string;
-  sender: "user" | "chatBot";
-};
-
 const Chatbot = () => {
   const { messages, input, handleInputChange, handleSubmit } = useChat();
-  const [message, setMessage] = useState("");
   const router = useRouter();
-
-
-
-  const handleClick = async () => {
-    // Your handleClick logic here
-  };
 
   const showList = () => {
     try {
@@ -51,7 +34,6 @@ const Chatbot = () => {
             if (e.key === "Enter" && !e.shiftKey) {
               e.preventDefault();
               handleSubmit();
-              setMessage("");
             }
           }}
           placeholder="Type your message here..."

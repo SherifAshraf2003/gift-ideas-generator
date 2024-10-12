@@ -5,9 +5,9 @@ import { NextResponse } from "next/server";
 interface products {
   title: string;
   price: string;
-  image: string | any;
+  image: string;
   rating: string;
-  numOfRatings: number | any;
+  numOfRatings: string;
   OverallPick: boolean;
 }
 

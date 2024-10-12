@@ -1,12 +1,5 @@
 "use client";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Accordion,
   AccordionContent,
@@ -19,33 +12,30 @@ import { ExternalLink, Star, StarHalf } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
 import { useSearchParams } from "next/navigation";
-import axios from "axios";
 
 interface data {
   title: string;
   price: string;
-  image: string | any;
+  image: string;
   rating: string;
-  numOfRatings: number | any;
+  numOfRatings: string;
   OverallPick: boolean;
 }
 
-const list = () => {
-  const [data, setData] = useState<Array<data>>([]);
-  const searchParams = useSearchParams();
-  const searchData = searchParams.get("data");
-  const [list, setList] = useState<any[]>(() => {
+const List = () => {
+  const useParams = useSearchParams();
+  const searchData = useParams.get("data");
+  const [list, setList] = useState(() => {
     if (typeof window !== "undefined" && searchData) {
       const storedList = localStorage.getItem(searchData);
       return storedList ? JSON.parse(storedList) : [];
     }
     return [];
   });
-  const [isloading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [ctr, setCtr] = useState(0);
-  const [items, setItems] = useState(() => {
+  const [items] = useState(() => {
     if (searchData) {
       try {
         return JSON.parse(
@@ -61,7 +51,7 @@ const list = () => {
     return [];
   });
 
-  const fetchInProgress = useRef(false);
+  const useFetchInProgress = useRef(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -70,9 +60,9 @@ const list = () => {
         return;
       }
 
-      if (fetchInProgress.current) return;
+      if (useFetchInProgress.current) return;
 
-      fetchInProgress.current = true;
+      useFetchInProgress.current = true;
 
       const delay = (ms: number) =>
         new Promise((resolve) => setTimeout(resolve, ms));
@@ -104,14 +94,14 @@ const list = () => {
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
-        fetchInProgress.current = false;
+        useFetchInProgress.current = false;
       }
     };
 
     fetchData();
   }, [items, searchData]);
 
-  function StarRating({ rating }: { rating: any }) {
+  function StarRating({ rating }: { rating: number }) {
     const fullStars = Math.floor(rating);
     const hasHalfStar = rating % 1 >= 0.5;
 
@@ -143,7 +133,7 @@ const list = () => {
 
   return (
     <>
-      {isloading ? (
+      {isLoading ? (
         <div className="flex flex-col items-center gap-10 ">
           <Progress
             className=" w-[400px] "
@@ -154,17 +144,22 @@ const list = () => {
       ) : (
         <div className="h-[600px] w-[750px] bg-white flex flex-col  space-y-6 rounded-xl overflow-auto scrollbar-none ">
           <Accordion type="single" collapsible className="p-4 h-fit ">
-            {list.map((item, index) => {
+            {list.map((item: Array<data>, index: number) => {
               if (item.length === 0)
                 return (
-                  <AccordionItem className="h-fit" value={`item-${index}`}>
+                  <AccordionItem
+                    key={index}
+                    className="h-fit"
+                    value={`item-${index}`}
+                  >
                     <AccordionTrigger className="text-lg">
                       {items[index].name}
                     </AccordionTrigger>
                     <AccordionContent className="h-fit flex justify-between items-baseline ">
                       <p>No data available</p>
-                      <CardFooter className="p-0 pt-2">
+                      <div className="p-0 pt-2">
                         <Link
+                          key={index}
                           href={`https://www.amazon.com/s?k=${items[
                             index
                           ].name.replace(/%/g, " and ")}`}
@@ -175,7 +170,7 @@ const list = () => {
                           View on Amazon
                           <ExternalLink className="w-4 h-4 ml-2" />
                         </Link>
-                      </CardFooter>
+                      </div>
                     </AccordionContent>
                   </AccordionItem>
                 );
@@ -201,11 +196,12 @@ const list = () => {
                     </div>
                   </AccordionTrigger>
                   {item.map((data: data) => (
-                    <AccordionContent>
+                    <AccordionContent key={index}>
                       <Card className="bg-white shadow-md hover:shadow-lg transition-shadow duration-300 h-fit">
                         <div className="flex flex-col sm:flex-row h-fit">
                           <div className="w-full sm:w-1/3 h-fit relative">
                             <Image
+                              key={index}
                               src={data.image}
                               alt={`item-${index}`}
                               height={200}
@@ -229,7 +225,7 @@ const list = () => {
                                 {`$${data.price.split(".")[0]}`}
                               </p>
                               <div className="flex items-center space-x-2 ">
-                                <StarRating rating={data.rating} />
+                                <StarRating rating={parseInt(data.rating)} />
                               </div>
                             </CardHeader>
                             <CardFooter className="p-0 mt-auto">
@@ -261,4 +257,4 @@ const list = () => {
   );
 };
 
-export default list;
+export default List;

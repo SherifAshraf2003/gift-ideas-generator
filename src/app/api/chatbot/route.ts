@@ -1,6 +1,5 @@
 "use server";
 import { generateText } from "ai";
-import { createStreamableValue } from "ai/rsc";
 import { createMistral } from "@ai-sdk/mistral";
 import { NextRequest } from "next/server";
 
@@ -9,7 +8,7 @@ interface Answers {
   answer: string;
 }
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   console.log("Hi");
   const mistral = createMistral({
     apiKey: process.env.API_KEY,
