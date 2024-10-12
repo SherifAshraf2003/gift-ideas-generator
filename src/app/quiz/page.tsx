@@ -79,16 +79,7 @@ const Quiz = () => {
             )
           )
         );
-        console.log(
-          JSON.stringify(
-            JSON.parse(
-              list.data.result.responseMessages[0].content[0].text
-                .replace("```", "")
-                .replace("json", "")
-                .replace("```", "")
-            )
-          )
-        );
+
         setIsLoading(false);
         router.push(`/List?data=${urlData}`);
       } catch (e) {
