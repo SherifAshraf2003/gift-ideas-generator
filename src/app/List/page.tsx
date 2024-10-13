@@ -38,10 +38,9 @@ const List = () => {
   const [items] = useState(() => {
     if (searchData) {
       try {
+        console.log(searchData)
         return JSON.parse(
           decodeURIComponent(searchData)
-            .replace(`{"gift_ideas":`, "")
-            .slice(0, -1)
         );
       } catch (error) {
         console.error("Error parsing searchData:", error);
@@ -72,7 +71,6 @@ const List = () => {
       try {
         if (items.length === 0) {
           throw new Error("No items to search for");
-          return;
         }
         for (let i = 0; i < items.length; i++) {
           setCtr((prev) => prev + 1);
