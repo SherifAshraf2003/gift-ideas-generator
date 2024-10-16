@@ -14,8 +14,8 @@ const config: Config = {
       colors: {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
-        gradientFrom: "#17152F",
-        gradientTo: "#494395",
+        gradientFrom: "#1A2980",
+        gradientTo: "#26D0CE",
         textColor: "#BAB9C1",
         card: {
           DEFAULT: "hsl(var(--card))",

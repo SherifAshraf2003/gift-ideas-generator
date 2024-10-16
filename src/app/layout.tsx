@@ -20,7 +20,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={inter.className}>
-      <body className="flex items-center justify-center flex-col h-[100vh] bg-gradient-to-r from-gradientFrom to-gradientTo ">
+      <body className=" bg-gradient-to-r from-gradientFrom to-gradientTo ">
         <Toaster />
         <main>{children}</main>
       </body>
