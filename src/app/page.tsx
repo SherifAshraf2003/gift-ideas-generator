@@ -1,10 +1,9 @@
 import Navbar from "@/components/Navbar";
-import Home from "@/components/Home";
+import Home from "@/components/LandingPage";
 const App = () => {
   return (
     <div>
-      <Navbar />
-      <div className="flex items-center justify-center flex-col h-[90vh]">
+      <div className="flex items-center justify-center flex-col h-screen ">
         <Home />
       </div>
     </div>

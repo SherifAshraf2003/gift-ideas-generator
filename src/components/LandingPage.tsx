@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import useSWR from "swr";
 
-const Home = () => {
+const LandingPage = () => {
   const router = useRouter();
   let queryString = "";
   const fetcher = (url: string) =>
@@ -61,4 +61,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default LandingPage;

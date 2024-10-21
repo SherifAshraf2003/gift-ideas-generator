@@ -1,17 +1,19 @@
-import { Button } from "./ui/button";
+"use client";
 import { Gift } from "lucide-react";
-
+import NavbarInteraction from "./Navbar-interaction";
+import { useRouter } from "next/navigation";
 const Navbar = () => {
+  const router = useRouter();
   return (
     <header className=" p-5 flex items-center justify-between">
-      <div className="flex gap-1 items-center">
+      <div
+        onClick={() => router.push("/")}
+        className="flex gap-1 items-center cursor-pointer"
+      >
         <p className="text-xl text-white md:text-2xl ">Gifty</p>
         <Gift color="white" size={32} />
       </div>
-      <nav className="flex gap-4">
-        <Button variant="outline">Login</Button>
-        <Button variant="outline">Sign up</Button>
-      </nav>
+      <NavbarInteraction />
     </header>
   );
 };

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Inter } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
+import Navbar from "@/components/Navbar";
 
 export const metadata: Metadata = {
   title: "Gift Ideas Generator",
@@ -20,9 +21,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={inter.className}>
-      <body className=" bg-gradient-to-r from-gradientFrom to-gradientTo ">
+      <body>
         <Toaster />
-        <main>{children}</main>
+        <main className="h-screen bg-gradient-to-r from-gradientFrom to-gradientTo ">
+          <Navbar />
+          {children}
+        </main>
       </body>
     </html>
   );
