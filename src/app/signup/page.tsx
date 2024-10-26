@@ -2,13 +2,14 @@
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "../../components/ui/button";
-import formSchema from "@/lib/schema";
 import { Input } from "../../components/ui/input";
 import { z } from "zod";
 import Link from "next/link";
 import { signupAction } from "../actions";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import formSchema from "@/lib/types";
+import { useUserDataStore } from "@/lib/store";
 
 const Signup = () => {
   const {
@@ -22,14 +23,15 @@ const Signup = () => {
 
   const onSubmit: SubmitHandler<z.infer<typeof formSchema>> = async (data) => {
     try {
-      const error = await signupAction(data);
-      if (error === null) {
+      const res = await signupAction(data);
+      if (res.error === null) {
         router.push("/error");
-      } else if (error === "User already registered") {
+      } else if (res.error === "User already registered") {
         toast("User is already registered", {
           description: "Please login to continue",
         });
       } else {
+        useUserDataStore.setState({ session: res.data.session?.access_token });
         router.push("/");
       }
     } catch (err) {

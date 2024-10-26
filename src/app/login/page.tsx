@@ -6,11 +6,12 @@ import { z } from "zod";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import Link from "next/link";
-import formSchema from "@/lib/schema";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { createClient } from "../utils/supabase/client";
 import { toast } from "sonner";
+import formSchema from "@/lib/types";
+import { useUserDataStore } from "@/lib/store";
 
 const loginSchema = formSchema.pick({
   email: true,
@@ -30,17 +31,19 @@ const Login = () => {
   const onSubmit: SubmitHandler<z.infer<typeof loginSchema>> = async (info) => {
     try {
       const supabase = createClient();
-      const { data, error } = await supabase.auth.getUser();
-      console.log(error);
+      const { error } = await supabase.auth.getUser();
       if (error === null) {
+        router.refresh();
         toast("You are currently logged in", {
           description: "Please log out to continue",
         });
         return;
       }
       const res = await axios.post("/api/auth/login", info);
-      if (res.data === null) {
+      if (res.data !== null) {
+        useUserDataStore.setState({ session: res.data.session.access_token });
         router.push("/");
+        router.refresh();
       } else router.push("/error");
     } catch (err) {
       console.error("Error during login:", err);

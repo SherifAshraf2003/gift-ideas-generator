@@ -15,21 +15,33 @@ import Image from "next/image";
 import user from "../public/user.png";
 import { logOutAction } from "@/app/actions";
 import { toast } from "sonner";
+import { useUserDataStore } from "@/lib/store";
 const NavbarInteraction = () => {
   const router = useRouter();
   const avatar = "profilePicUrl";
 
-  const logOut: any = async () => {
-    const error = await logOutAction();
-    if (error === null) {
-      console.log("err:", error);
-    } else {
-      if (window.location.pathname !== "/") router.push("/");
-      else {
+  const logOut = async () => {
+    try {
+      const error = await logOutAction();
+      if (error.error !== null) {
+        throw error;
+      }
+
+      if (window.location.pathname === "/") {
+        router.refresh();
+        useUserDataStore.setState({ session: "" });
         toast("Logged out", {
           description: "You have been logged out successfully",
         });
+      } else {
+        router.push("/");
+        router.refresh();
       }
+    } catch (err) {
+      console.error("Logout error:", err);
+      toast("Error", {
+        description: "Failed to log out. Please try again.",
+      });
     }
   };
 

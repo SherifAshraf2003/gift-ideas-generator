@@ -1,4 +1,3 @@
-import Navbar from "@/components/Navbar";
 import Home from "@/components/LandingPage";
 const App = () => {
   return (

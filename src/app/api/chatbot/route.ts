@@ -9,45 +9,45 @@ interface Answers {
 }
 
 export async function GET() {
-  return Response.json({ message: "Hello" });
-  //   console.log("Hi");
-  //   const mistral = createMistral({
-  //     apiKey: process.env.API_KEY,
-  //   });
-  //   const prompt =
-  //     "give me all the questions you need to generate the most customized gift ideas for the user";
+  // return Response.json({ message: "Hello" });
+  console.log("Hi");
+  const mistral = createMistral({
+    apiKey: process.env.API_KEY,
+  });
+  const prompt =
+    "give me all the questions you need to generate the most customized gift ideas for the user";
 
-  //   const result = await generateText({
-  //     model: mistral("mistral-large-latest"),
-  //     system:
-  //       "You are a helpful assistant that generates gift ideas based on the users answers, you are gonna ask the user couple questions about the person he want to buy gifts for and then you will generate a list of gifts, REPLY IN JSON FORMAT ONLY AND DONT GIVE ME OPTIONS",
-  //     prompt,
-  //   });
+  const result = await generateText({
+    model: mistral("mistral-large-latest"),
+    system:
+      "You are a helpful assistant that generates gift ideas based on the users answers, you are gonna ask the user couple questions about the person he want to buy gifts for and then you will generate a list of gifts, REPLY IN JSON FORMAT ONLY AND DONT GIVE ME OPTIONS",
+    prompt,
+  });
 
-  //   return Response.json({ result });
-  // }
+  return Response.json({ result });
+}
 
-  // export async function POST(req: NextRequest) {
-  //   console.log("hello");
-  //   const body = await req.json();
-  //   const { answers }: { answers: Array<Answers> } = body;
-  //   const mistral = createMistral({
-  //     apiKey: process.env.API_KEY,
-  //   });
-  //   const prompt = answers
-  //     .map((answer) => {
-  //       return `Question: ${answer.question}\nAnswer: ${answer.answer}`;
-  //     })
-  //     .join("\n");
-  //   console.log("hello");
+export async function POST(req: NextRequest) {
+  console.log("hello");
+  const body = await req.json();
+  const { answers }: { answers: Array<Answers> } = body;
+  const mistral = createMistral({
+    apiKey: process.env.API_KEY,
+  });
+  const prompt = answers
+    .map((answer) => {
+      return `Question: ${answer.question}\nAnswer: ${answer.answer}`;
+    })
+    .join("\n");
+  console.log("hello");
 
-  //   const result = await generateText({
-  //     model: mistral("mistral-large-latest"),
-  //     system:
-  //       "You are a helpful assistant that generates gift ideas based on the users answers, you just asked the user a couple questions about the person he want to buy gifts for, i will provide you with the answers to these questions and then you will generate a list of gifts, REPLY IN JSON FORMAT ONLY, THE FORMAT SHOULD ONLY BE AN ARRAY OF THIS {name : item} ",
-  //     prompt,
-  //   });
-  //   return Response.json({ result });
+  const result = await generateText({
+    model: mistral("mistral-large-latest"),
+    system:
+      "You are a helpful assistant that generates gift ideas based on the users answers, you just asked the user a couple questions about the person he want to buy gifts for, i will provide you with the answers to these questions and then you will generate a list of gifts, REPLY IN JSON FORMAT ONLY, THE FORMAT SHOULD ONLY BE AN ARRAY OF THIS {name : item} ",
+    prompt,
+  });
+  return Response.json({ result });
 }
 
 /*

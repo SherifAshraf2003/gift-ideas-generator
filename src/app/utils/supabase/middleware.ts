@@ -1,5 +1,4 @@
 import { createServerClient } from "@supabase/ssr";
-import { cookies } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
 
 export async function updateSession(req: NextRequest) {

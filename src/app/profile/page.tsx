@@ -1,29 +1,20 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { User, Camera, Plus } from "lucide-react";
+import { useUserDataStore } from "@/lib/store";
 
 const profilePage = () => {
-  const [name, setName] = useState("");
+  const name = useUserDataStore((state) => state.username);
   const [giftLists, _setGiftLists] = useState([
     { id: 1, name: "Birthday Gifts", items: 5 },
     { id: 2, name: "Christmas Gifts", items: 8 },
     { id: 3, name: "Anniversary Gifts", items: 3 },
   ]);
-
-  useEffect(() => {
-    const fetchName = async () => {
-      const response = await fetch("/api/auth/get-username");
-      const data = await response.json();
-      console.log(data.username);
-      setName(data.username);
-    };
-    fetchName();
-  }, []);
 
   return (
     <div className="min-h-screen text-white">

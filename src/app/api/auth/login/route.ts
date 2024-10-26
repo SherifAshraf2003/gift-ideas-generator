@@ -1,6 +1,4 @@
-import { redirect } from "next/navigation";
 import { createClient } from "../../../utils/supabase/server";
-import { revalidatePath } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -8,7 +6,7 @@ export async function POST(req: NextRequest) {
 
   const info = await req.json();
 
-  const { data, error } = await supabase.auth.signInWithPassword(info);
+  const { data } = await supabase.auth.signInWithPassword(info);
 
-  return NextResponse.json(error);
+  return NextResponse.json(data);
 }

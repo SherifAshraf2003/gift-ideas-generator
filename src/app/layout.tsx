@@ -3,6 +3,8 @@ import "./globals.css";
 import { Inter } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import Navbar from "@/components/Navbar";
+import { StoreInitializer } from "./providers/StoreInitializer";
+import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: "Gift Ideas Generator",
@@ -22,11 +24,14 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.className}>
       <body>
-        <Toaster />
-        <main className="h-screen bg-gradient-to-r from-gradientFrom to-gradientTo ">
+        <Suspense>
+          <Toaster />
+          <StoreInitializer />
           <Navbar />
-          {children}
-        </main>
+          <main className="h-screen bg-gradient-to-r from-gradientFrom to-gradientTo ">
+            {children}
+          </main>
+        </Suspense>
       </body>
     </html>
   );

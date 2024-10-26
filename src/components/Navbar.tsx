@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 const Navbar = () => {
   const router = useRouter();
   return (
-    <header className=" p-5 flex items-center justify-between">
+    <header className=" bg-gradient-to-r from-gradientFrom to-gradientTo  p-5 flex items-center justify-between">
       <div
         onClick={() => router.push("/")}
         className="flex gap-1 items-center cursor-pointer"

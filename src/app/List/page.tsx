@@ -13,6 +13,9 @@ import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
+import { useUserDataStore } from "@/lib/store";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 interface data {
   title: string;
@@ -34,14 +37,13 @@ const List = () => {
     return [];
   });
   const [isLoading, setIsLoading] = useState(true);
+  const [giftListName, setGiftListName] = useState("");
   const [ctr, setCtr] = useState(0);
   const [items] = useState(() => {
     if (searchData) {
       try {
-        console.log(searchData)
-        return JSON.parse(
-          decodeURIComponent(searchData)
-        );
+        console.log(searchData);
+        return JSON.parse(decodeURIComponent(searchData));
       } catch (error) {
         console.error("Error parsing searchData:", error);
         return [];
@@ -85,6 +87,7 @@ const List = () => {
         }
 
         setList(newList);
+
         if (searchData) {
           localStorage.setItem(searchData, JSON.stringify(newList));
         }
@@ -98,6 +101,35 @@ const List = () => {
 
     fetchData();
   }, [items, searchData]);
+
+  const saveGiftList = () => {
+    //save the gift list in our global state
+
+    if (list.length > 0 && searchData) {
+      useUserDataStore.setState((state) => {
+        const timestamp = new Date().toISOString();
+
+        // Create a new giftList entry with metadata
+        const newGiftList = {
+          id: giftListName,
+          items: list,
+          createdAt: timestamp,
+          searchTerms: items.map((item: { name: any }) => item.name),
+        };
+
+        // Merge with existing lists, replacing if same ID exists
+        const updatedGiftLists = {
+          ...state.giftLists,
+          [giftListName]: newGiftList,
+        };
+
+        return {
+          giftLists: updatedGiftLists,
+        };
+      });
+    }
+    console.log(useUserDataStore.getState().giftLists);
+  };
 
   function StarRating({ rating }: { rating: number }) {
     const fullStars = Math.floor(rating);
@@ -130,7 +162,7 @@ const List = () => {
   }
 
   return (
-    <>
+    <div className=" flex flex-col items-center  ">
       {isLoading ? (
         <div className="flex flex-col items-center gap-10 ">
           <Progress
@@ -251,7 +283,18 @@ const List = () => {
           </Accordion>
         </div>
       )}
-    </>
+      <div className="flex justify-center gap-20 items-center  border-none w-full mt-4 ">
+        <Input
+          className=" border-white max-w-[300px] text-white "
+          placeholder="Enter Your GiftList Name"
+          value={giftListName}
+          onChange={(e) => setGiftListName(e.target.value)}
+        />
+        <Button onClick={saveGiftList} variant="outline" size="lg">
+          Save
+        </Button>
+      </div>
+    </div>
   );
 };
 

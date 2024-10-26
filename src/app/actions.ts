@@ -1,4 +1,5 @@
-import { createClient } from "./utils/supabase/client";
+"use server";
+import { createClient } from "./utils/supabase/server";
 
 // export async function loginAction(info: { email: string; password: string }) {
 //   const supabase = createClient();
@@ -13,12 +14,15 @@ import { createClient } from "./utils/supabase/client";
 //   redirect("/home");
 // }
 
-export async function signupAction(data: { email: string; password: string }) {
+export async function signupAction(info: { email: string; password: string }) {
   const supabase = createClient();
-  console.log("data:", data);
-  const { error } = await supabase.auth.signUp(data);
+  const { error, data } = await supabase.auth.signUp(info);
   console.log(error?.message);
-  return error?.message;
+  const res = {
+    error: error?.message,
+    data: data,
+  };
+  return res;
 }
 
 export async function logOutAction() {

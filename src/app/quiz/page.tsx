@@ -101,7 +101,7 @@ const Quiz = () => {
   };
 
   return (
-    <>
+    <div className="flex justify-center items-center">
       <Card className="max-w-[650px] w-[650px]">
         <CardHeader>
           <CardTitle className="text-3xl">Gift Ideas Generator</CardTitle>
@@ -154,7 +154,7 @@ const Quiz = () => {
           </Button>
         </CardFooter>
       </Card>
-    </>
+    </div>
   );
 };
 
