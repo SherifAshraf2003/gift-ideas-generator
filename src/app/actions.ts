@@ -14,9 +14,17 @@ import { createClient } from "./utils/supabase/server";
 //   redirect("/home");
 // }
 
-export async function signupAction(info: { email: string; password: string }) {
+export async function signupAction(info: {
+  email: string;
+  password: string;
+  name: string;
+}) {
   const supabase = createClient();
-  const { error, data } = await supabase.auth.signUp(info);
+  const { error, data } = await supabase.auth.signUp({
+    email: info.email,
+    password: info.password,
+  });
+  console.log(data);
   console.log(error?.message);
   const res = {
     error: error?.message,

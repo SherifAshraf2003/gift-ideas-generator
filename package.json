@@ -24,6 +24,7 @@
     "@supabase/supabase-js": "^2.45.4",
     "ai": "^3.3.41",
     "axios": "^1.7.7",
+    "browser-image-compression": "^2.0.2",
     "cheerio": "^1.0.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",

@@ -10,12 +10,13 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { ExternalLink, Star, StarHalf } from "lucide-react";
 import Link from "next/link";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, use } from "react";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { useUserDataStore } from "@/lib/store";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 interface data {
   title: string;
@@ -103,32 +104,23 @@ const List = () => {
   }, [items, searchData]);
 
   const saveGiftList = () => {
-    //save the gift list in our global state
-
-    if (list.length > 0 && searchData) {
-      useUserDataStore.setState((state) => {
-        const timestamp = new Date().toISOString();
-
-        // Create a new giftList entry with metadata
-        const newGiftList = {
+    const userId = useUserDataStore.getState().userId;
+    console.log(userId);
+    try {
+      if (list.length > 0 && searchData) {
+        useUserDataStore.getState().addGiftList(userId, {
           id: giftListName,
           items: list,
-          createdAt: timestamp,
-          searchTerms: items.map((item: { name: any }) => item.name),
-        };
+          createdAt: new Date().toISOString(),
+          search_terms: items.map((item: any) => item.name),
+          user_id: userId,
+        });
+      }
 
-        // Merge with existing lists, replacing if same ID exists
-        const updatedGiftLists = {
-          ...state.giftLists,
-          [giftListName]: newGiftList,
-        };
-
-        return {
-          giftLists: updatedGiftLists,
-        };
-      });
+      toast.success("Gift List Saved Successfully");
+    } catch (error) {
+      console.error(error);
     }
-    console.log(useUserDataStore.getState().giftLists);
   };
 
   function StarRating({ rating }: { rating: number }) {
@@ -283,17 +275,19 @@ const List = () => {
           </Accordion>
         </div>
       )}
-      <div className="flex justify-center gap-20 items-center  border-none w-full mt-4 ">
-        <Input
-          className=" border-white max-w-[300px] text-white "
-          placeholder="Enter Your GiftList Name"
-          value={giftListName}
-          onChange={(e) => setGiftListName(e.target.value)}
-        />
-        <Button onClick={saveGiftList} variant="outline" size="lg">
-          Save
-        </Button>
-      </div>
+      {isLoading ? null : (
+        <div className="flex justify-center gap-20 items-center  border-none w-full mt-4 ">
+          <Input
+            className=" border-white max-w-[300px] text-white "
+            placeholder="Enter Your GiftList Name"
+            value={giftListName}
+            onChange={(e) => setGiftListName(e.target.value)}
+          />
+          <Button onClick={saveGiftList} variant="outline" size="lg">
+            "Save List"
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

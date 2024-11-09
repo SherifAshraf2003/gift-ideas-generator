@@ -18,7 +18,19 @@ import { toast } from "sonner";
 import { useUserDataStore } from "@/lib/store";
 const NavbarInteraction = () => {
   const router = useRouter();
-  const avatar = "profilePicUrl";
+  const profilePic = useUserDataStore((state) => state.profilePic);
+
+  const deleteUserData = () => {
+    useUserDataStore.setState({
+      username: "",
+      giftLists: {},
+      profilePic: "",
+      isLoading: false,
+      userId: "",
+      error: null,
+      session: "",
+    });
+  };
 
   const logOut = async () => {
     try {
@@ -33,6 +45,7 @@ const NavbarInteraction = () => {
         toast("Logged out", {
           description: "You have been logged out successfully",
         });
+        deleteUserData();
       } else {
         router.push("/");
         router.refresh();
@@ -67,7 +80,11 @@ const NavbarInteraction = () => {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Avatar>
-            <AvatarImage src={avatar} alt="profile pic" />
+            <AvatarImage
+              src={profilePic}
+              alt="profile pic"
+              className="cursor-pointer"
+            />
             <AvatarFallback>
               <Image
                 src={user}

@@ -44,9 +44,14 @@ const Login = () => {
         useUserDataStore.setState({ session: res.data.session.access_token });
         router.push("/");
         router.refresh();
+        useUserDataStore.getState().setUserId();
       } else router.push("/error");
     } catch (err) {
       console.error("Error during login:", err);
+      router.refresh();
+      toast("Error while logging in", {
+        description: "Wrong email or password",
+      });
     }
   };
 

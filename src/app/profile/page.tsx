@@ -1,20 +1,128 @@
 "use client";
-import { useState } from "react";
+import { use, useRef, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { User, Camera, Plus } from "lucide-react";
-import { useUserDataStore } from "@/lib/store";
+import { useUserDataStore, viewedGiftList } from "@/lib/store";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { GiftList } from "@/lib/types";
+import Image from "next/image";
+import imageCompression from "browser-image-compression";
+import { createClient } from "../utils/supabase/client";
+import { toast } from "sonner";
+import { promise, set } from "zod";
+import { useUser } from "@nextui-org/react";
 
 const profilePage = () => {
   const name = useUserDataStore((state) => state.username);
-  const [giftLists, _setGiftLists] = useState([
-    { id: 1, name: "Birthday Gifts", items: 5 },
-    { id: 2, name: "Christmas Gifts", items: 8 },
-    { id: 3, name: "Anniversary Gifts", items: 3 },
-  ]);
+  const profilePic = useUserDataStore((state) => state.profilePic);
+  const setProfilePic = useUserDataStore((state) => state.setProfilePic);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const [username, setUsername] = useState("");
+
+  const giftLists = Object.values(useUserDataStore((state) => state.giftLists));
+  const router = useRouter();
+
+  const handleNavigation = (items: GiftList) => {
+    console.log(items);
+    viewedGiftList.setState(items);
+    console.log(viewedGiftList.getState().items);
+    router.push(`/giftList`);
+  };
+
+  const [isPending, startTransition] = useTransition();
+
+  const convertBlobUrlToFile = async (url: string): Promise<File> => {
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const userId = useUserDataStore.getState().userId;
+
+      const file = new File([blob], userId, { type: blob.type });
+
+      URL.revokeObjectURL(url);
+      console.log(file);
+      return file;
+    } catch (error) {
+      console.error("Error converting blob URL to file:", error);
+      throw error;
+    }
+  };
+
+  const handleDataChange = async (file: File) => {
+    const fileName = file.name;
+    const path = fileName;
+    try {
+      file = await imageCompression(file, { maxSizeMB: 1 });
+    } catch (error) {
+      console.error("Error compressing image:", error);
+      return { url: "", error: "Image compression failed" };
+    }
+    const supabase = createClient();
+
+    const { data, error: uploadError } = await supabase.storage
+      .from("avatars")
+      .upload(path, file, {
+        cacheControl: "3600",
+        upsert: true,
+      });
+
+    if (uploadError) {
+      console.error("Error uploading image:", uploadError);
+      return { url: "", error: "Image upload failed" };
+    }
+
+    const url = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/avatars/${data?.path}`;
+    return { url, error: "" };
+  };
+
+  const handleUpload = () => {
+    startTransition(async () => {
+      if (
+        inputRef.current &&
+        inputRef.current.files &&
+        inputRef.current.files.length > 0
+      ) {
+        const file = inputRef.current.files[0];
+        const validImageTypes = ["image/jpeg", "image/png", "image/gif"];
+
+        if (!validImageTypes.includes(file.type)) {
+          toast.error("Invalid file type. Please upload a valid image file.");
+          return;
+        }
+
+        const imageUrl = URL.createObjectURL(file);
+        const imageFile = await convertBlobUrlToFile(imageUrl);
+
+        const { url, error } = await handleDataChange(imageFile);
+
+        if (error) {
+          console.error(error);
+          return;
+        }
+
+        console.log(url);
+        setProfilePic(url);
+      } else if (username !== "") {
+        const supabase = createClient();
+        const { error } = await supabase
+          .from("profiles")
+          .update({ username: username })
+          .eq("id", useUserDataStore.getState().userId);
+
+        useUserDataStore.setState({ username: username });
+
+        if (error) {
+          console.error("Error updating username:", error);
+        }
+      }
+    });
+  };
 
   return (
     <div className="min-h-screen text-white">
@@ -23,7 +131,7 @@ const profilePage = () => {
           <CardContent className=" p-6 flex-col  items-center ">
             <div className=" flex flex-col gap-7  items-center mb-8 ">
               <Avatar className=" h-32 w-32 text-gray-400 ">
-                <AvatarImage src="/" />
+                <AvatarImage src={profilePic} height={64} width={64} />
                 <AvatarFallback>
                   <User className="h-16 w-16" />
                 </AvatarFallback>
@@ -53,16 +161,37 @@ const profilePage = () => {
                       <Input
                         className="text-white bg-white/20 border-none placeholder-black "
                         id="name"
-                        placeholder="Sherif Ashraf"
+                        placeholder={name}
+                        onChange={(e) => {
+                          setUsername(e.target.value);
+                        }}
+                        value={username}
                       />
                     </div>
 
-                    <Button className="mt-6" size="sm" variant="secondary">
-                      <Camera className="h-4 w-4 mr-2" />
-                      Change Picture
-                    </Button>
+                    <div>
+                      <label
+                        htmlFor="picture"
+                        className="font-medium mb-1 text-sm flex gap-1 items-center"
+                      >
+                        <Camera className="h-6 w-6" />
+                        profile picture
+                      </label>
+                      <Input
+                        className="text-gray-700"
+                        id="picture"
+                        type="file"
+                        ref={inputRef}
+                      />
+                    </div>
                   </div>
-                  <Button className="mt-4">Save Changes</Button>
+                  <Button
+                    className="mt-4"
+                    disabled={isPending}
+                    onClick={handleUpload}
+                  >
+                    {isPending ? "Saving changes..." : "Save changes"}
+                  </Button>
                 </div>
               </TabsContent>
 
@@ -72,20 +201,27 @@ const profilePage = () => {
                     <Card key={list.id}>
                       <CardContent className="flex items-center p-4  justify-between">
                         <div>
-                          <h2 className="font-medium">{list.name}</h2>
+                          <h2 className="font-medium">{list.id}</h2>
                           <p className="text-gray-500 text-sm">
-                            {list.items} items
+                            {list.items.length} items
                           </p>
                         </div>
-                        <Button>view</Button>
+                        <Button
+                          className="mx-1"
+                          onClick={() => handleNavigation(list)}
+                        >
+                          view
+                        </Button>
                       </CardContent>
                     </Card>
                   ))}
                   <div className="flex-1 w-full flex justify-center">
-                    <Button className=" flex-1" size="lg">
-                      Create New List
-                      <Plus className="h-4 w-4 ml-2" />
-                    </Button>
+                    <Link href="/">
+                      <Button className=" flex-1" size="lg">
+                        Create New List
+                        <Plus className="h-4 w-4 ml-2" />
+                      </Button>
+                    </Link>
                   </div>
                 </div>
               </TabsContent>

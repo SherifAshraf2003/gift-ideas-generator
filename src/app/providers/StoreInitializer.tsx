@@ -5,10 +5,24 @@ import { useEffect } from "react";
 
 export function StoreInitializer() {
   const setName = useUserDataStore((state) => state.setName);
-  const session = useUserDataStore((state) => state.session);
+  const getUserId = useUserDataStore((state) => state.setUserId);
+  const getLists = useUserDataStore((state) => state.syncWithSupabase);
+  const userId = useUserDataStore((state) => state.userId);
+  const getProfilePic = useUserDataStore((state) => state.getProfilePic);
+
   useEffect(() => {
-    setName();
-  }, [session]);
+    if (!userId) {
+      getUserId();
+    }
+  }, []);
+
+  useEffect(() => {
+    if (userId) {
+      getProfilePic();
+      setName();
+      getLists(userId);
+    }
+  }, [userId, setName, getLists]);
 
   return null;
 }
