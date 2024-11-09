@@ -27,8 +27,8 @@ export default function RootLayout({
         <Suspense>
           <Toaster />
           <StoreInitializer />
-          <Navbar />
-          <main className="h-screen bg-gradient-to-r from-gradientFrom to-gradientTo">
+          <main className=" bg-gradient-to-br from-indigo-950 via-primary/90 to-teal-500">
+            <Navbar />
             {children}
           </main>
         </Suspense>

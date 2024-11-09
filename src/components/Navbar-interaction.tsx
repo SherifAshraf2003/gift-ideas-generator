@@ -40,10 +40,11 @@ const NavbarInteraction = () => {
       }
 
       if (window.location.pathname === "/") {
-        router.refresh();
         useUserDataStore.setState({ session: "" });
+        router.refresh();
         toast("Logged out", {
           description: "You have been logged out successfully",
+          position: "bottom-center",
         });
         deleteUserData();
       } else {
@@ -54,28 +55,35 @@ const NavbarInteraction = () => {
       console.error("Logout error:", err);
       toast("Error", {
         description: "Failed to log out. Please try again.",
+        position: "bottom-center",
       });
     }
   };
 
   return (
     <nav className="flex gap-4">
-      <Button
-        variant="outline"
-        onClick={() => {
-          router.push("/login");
-        }}
-      >
-        Login
-      </Button>
-      <Button
-        variant="outline"
-        onClick={() => {
-          router.push("/signup");
-        }}
-      >
-        Sign up
-      </Button>
+      {
+        <div className="flex gap-4">
+          <Button
+            variant="ghost"
+            className="hover:bg-white text-white border"
+            onClick={() => {
+              router.push("/login");
+            }}
+          >
+            Login
+          </Button>
+          <Button
+            variant="outline"
+            className="hover:bg-transparent hover:text-white  border-1"
+            onClick={() => {
+              router.push("/signup");
+            }}
+          >
+            Sign up
+          </Button>
+        </div>
+      }
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>

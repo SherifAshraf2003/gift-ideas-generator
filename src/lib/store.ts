@@ -75,8 +75,7 @@ export const useUserDataStore = create<userData>()(
         }
       },
       setProfilePic: (url: string) => {
-        set((state) => ({ ...state, profilePic: url }));
-        console.log(url);
+        set({ profilePic: url });
       },
       setSessionStatus: async () => {},
       syncWithSupabase: async (userId: string) => {

@@ -36,6 +36,7 @@ const Login = () => {
         router.refresh();
         toast("You are currently logged in", {
           description: "Please log out to continue",
+          position: "bottom-center",
         });
         return;
       }
@@ -51,12 +52,13 @@ const Login = () => {
       router.refresh();
       toast("Error while logging in", {
         description: "Wrong email or password",
+        position: "bottom-center",
       });
     }
   };
 
   return (
-    <section className="flex min-h-screen justify-center items-center p-4 bg-gradient-to-r from-gradientFrom to-gradientTo">
+    <section className="flex min-h-screen justify-center items-center p-4 ">
       <div className="w-full max-w-md">
         <form
           onSubmit={handleSubmit(onSubmit)}
@@ -95,7 +97,7 @@ const Login = () => {
             </div>
             <div className="flex flex-col items-center">
               <Button
-                className="min-w-28 bg-gradient-to-r from-gradientFrom to-gradientTo text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                className="min-w-28 bg-black hover:bg-primary/90 text-white font-bold py-2 px-4 mt-2 rounded focus:outline-none focus:shadow-outline"
                 type="submit"
                 disabled={isSubmitting}
               >

@@ -1,5 +1,5 @@
 "use client";
-import { use, useRef, useState, useTransition } from "react";
+import { use, useRef, useState, useTransition, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -27,6 +27,7 @@ const profilePage = () => {
 
   const giftLists = Object.values(useUserDataStore((state) => state.giftLists));
   const router = useRouter();
+  const supabase = createClient();
 
   const handleNavigation = (items: GiftList) => {
     console.log(items);
@@ -63,7 +64,6 @@ const profilePage = () => {
       console.error("Error compressing image:", error);
       return { url: "", error: "Image compression failed" };
     }
-    const supabase = createClient();
 
     const { data, error: uploadError } = await supabase.storage
       .from("avatars")
@@ -81,52 +81,73 @@ const profilePage = () => {
     return { url, error: "" };
   };
 
-  const handleUpload = () => {
-    startTransition(async () => {
-      if (
-        inputRef.current &&
-        inputRef.current.files &&
-        inputRef.current.files.length > 0
-      ) {
-        const file = inputRef.current.files[0];
-        const validImageTypes = ["image/jpeg", "image/png", "image/gif"];
+  const handleUpload = async () => {
+    if (inputRef.current?.files?.[0]) {
+      const file = inputRef.current.files[0];
+      const validImageTypes = ["image/jpeg", "image/png", "image/gif"];
 
-        if (!validImageTypes.includes(file.type)) {
-          toast.error("Invalid file type. Please upload a valid image file.");
-          return;
-        }
+      if (!validImageTypes.includes(file.type)) {
+        toast.error("Invalid file type. Please upload a valid image file.", {
+          position: "bottom-center",
+        });
+        return;
+      }
 
+      try {
         const imageUrl = URL.createObjectURL(file);
         const imageFile = await convertBlobUrlToFile(imageUrl);
+        URL.revokeObjectURL(imageUrl);
 
         const { url, error } = await handleDataChange(imageFile);
 
         if (error) {
           console.error(error);
-          return;
-        }
+          toast.error("Failed to upload image", {
+            position: "bottom-center",
+          });
+        } else {
+          setProfilePic(url);
 
-        console.log(url);
-        setProfilePic(url);
-      } else if (username !== "") {
-        const supabase = createClient();
+          await useUserDataStore.getState().getProfilePic();
+
+          toast.success("Profile picture updated successfully");
+        }
+      } catch (error) {
+        console.error("Error updating profile picture:", error);
+        toast.error("Failed to update profile picture", {
+          position: "bottom-center",
+        });
+      }
+    }
+
+    if (username) {
+      try {
         const { error } = await supabase
           .from("profiles")
           .update({ username: username })
           .eq("id", useUserDataStore.getState().userId);
 
         useUserDataStore.setState({ username: username });
-
-        if (error) {
-          console.error("Error updating username:", error);
-        }
+        toast.success("Username updated successfully", {
+          position: "bottom-center",
+        });
+      } catch (error) {
+        console.error("Error updating username:", error);
+        toast.error("Failed to update username", {
+          position: "bottom-center",
+        });
       }
-    });
+    }
+  };
+
+  const onSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    handleUpload();
   };
 
   return (
     <div className="min-h-screen text-white">
-      <main className="contaier mx-auto px-10 py-4 ">
+      <main className="contaier max-w-7xl mx-auto  px-10 py-4 ">
         <Card className="bg-white/10 backdrop-blur-lg flex-col border-none text-white ">
           <CardContent className=" p-6 flex-col  items-center ">
             <div className=" flex flex-col gap-7  items-center mb-8 ">
@@ -178,7 +199,7 @@ const profilePage = () => {
                         profile picture
                       </label>
                       <Input
-                        className="text-gray-700"
+                        className="text-black"
                         id="picture"
                         type="file"
                         ref={inputRef}
@@ -186,9 +207,9 @@ const profilePage = () => {
                     </div>
                   </div>
                   <Button
-                    className="mt-4"
+                    className="mt-4 "
                     disabled={isPending}
-                    onClick={handleUpload}
+                    onClick={onSubmit}
                   >
                     {isPending ? "Saving changes..." : "Save changes"}
                   </Button>

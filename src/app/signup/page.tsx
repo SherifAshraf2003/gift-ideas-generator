@@ -29,6 +29,7 @@ const Signup = () => {
       } else if (res.error === "User already registered") {
         toast("User is already registered", {
           description: "Please login to continue",
+          position: "bottom-center",
         });
       } else {
         useUserDataStore.setState({ session: res.data.session?.access_token });
@@ -40,7 +41,7 @@ const Signup = () => {
   };
 
   return (
-    <section className="flex min-h-screen justify-center items-center p-4 bg-gradient-to-r from-gradientFrom to-gradientTo ">
+    <section className="flex min-h-screen justify-center items-center p-4  ">
       <div className="w-full max-w-md">
         <form
           onSubmit={handleSubmit(onSubmit)}
