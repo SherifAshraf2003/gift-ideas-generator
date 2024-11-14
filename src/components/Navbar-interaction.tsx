@@ -62,7 +62,7 @@ const NavbarInteraction = () => {
 
   return (
     <nav className="flex gap-4">
-      {
+      {useUserDataStore.getState().userId === "" && (
         <div className="flex gap-4">
           <Button
             variant="ghost"
@@ -83,7 +83,7 @@ const NavbarInteraction = () => {
             Sign up
           </Button>
         </div>
-      }
+      )}
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>

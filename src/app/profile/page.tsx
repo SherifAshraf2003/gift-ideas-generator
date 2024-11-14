@@ -1,5 +1,5 @@
 "use client";
-import { use, useRef, useState, useTransition, useCallback } from "react";
+import { useRef, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -10,12 +10,9 @@ import { useUserDataStore, viewedGiftList } from "@/lib/store";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { GiftList } from "@/lib/types";
-import Image from "next/image";
 import imageCompression from "browser-image-compression";
 import { createClient } from "../utils/supabase/client";
 import { toast } from "sonner";
-import { promise, set } from "zod";
-import { useUser } from "@nextui-org/react";
 
 const profilePage = () => {
   const name = useUserDataStore((state) => state.username);
@@ -36,7 +33,7 @@ const profilePage = () => {
     router.push(`/giftList`);
   };
 
-  const [isPending, startTransition] = useTransition();
+  const [isPending] = useTransition();
 
   const convertBlobUrlToFile = async (url: string): Promise<File> => {
     try {
