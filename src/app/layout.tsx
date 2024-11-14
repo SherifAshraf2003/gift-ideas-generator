@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/sonner";
 import Navbar from "@/components/Navbar";
 import { StoreInitializer } from "./providers/StoreInitializer";
 import { Suspense } from "react";
+import { Analytics } from "@vercel/analytics/react";
 
 export const metadata: Metadata = {
   title: "Gift Ideas Generator",
@@ -32,6 +33,7 @@ export default function RootLayout({
             {children}
           </main>
         </Suspense>
+        <Analytics />
       </body>
     </html>
   );

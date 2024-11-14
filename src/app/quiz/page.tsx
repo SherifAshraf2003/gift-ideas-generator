@@ -108,7 +108,7 @@ const Quiz = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <Card className="w-[300px] sm:min-w-[500px] ">
+        <Card className="w-[300px] mb-24  sm:min-w-[500px] ">
           <CardHeader>
             <CardTitle className="text-3xl">Gift Ideas Generator</CardTitle>
             <CardDescription className="text-lg">

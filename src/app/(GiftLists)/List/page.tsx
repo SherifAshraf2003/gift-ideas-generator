@@ -157,14 +157,14 @@ const List = () => {
   }
 
   return (
-    <div className="flex flex-col items-center  h-[93vh] justify-center  ">
+    <div className="flex flex-col items-center   h-[93vh] justify-center  ">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
         {isLoading ? (
-          <div className="flex flex-col items-center gap-10 ">
+          <div className="flex flex-col items-center gap-10  ">
             <Progress
               className=" w-[200px] sm:w-[400px] "
               value={(ctr / items.length) * 100}
@@ -172,7 +172,7 @@ const List = () => {
             <div className="loaderr"></div>
           </div>
         ) : (
-          <div className=" mx-auto h-[500px] w-[350px] sm:h-[700px] sm:w-[800px] bg-white flex flex-col  space-y-6 rounded-xl overflow-auto scrollbar-none ">
+          <div className=" mx-auto h-[500px] w-[350px] sm:h-[700px] sm:w-[800px]  bg-white flex flex-col  space-y-6 rounded-xl overflow-auto scrollbar-none ">
             <Accordion type="single" collapsible className="p-4 h-fit ">
               {list.map((item: Array<data>, index: number) => {
                 if (item.length === 0)
@@ -286,7 +286,7 @@ const List = () => {
           </div>
         )}
         {isLoading ? null : (
-          <div className="flex justify-center mx-auto gap-2 items-center  border-none w-full mt-4 ">
+          <div className="flex justify-center mx-auto gap-2 items-center mb-8 sm:mb-0 border-none w-full mt-4 ">
             <Input
               className=" border-white max-w-[300px] text-white "
               placeholder="Enter Your GiftList Name"

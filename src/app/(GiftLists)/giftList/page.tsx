@@ -79,9 +79,11 @@ const List = () => {
         ) : (
           <>
             <div>
-              <p className=" text-white text-4xl m-10 mt-20 font-bold">{id}</p>
+              <p className=" text-white text-4xl m-10 mt-14 sm:mt-7 font-bold">
+                {id}
+              </p>
             </div>
-            <div className="mx-auto h-[500px] w-[350px] sm:h-[700px] sm:w-[800px] bg-white flex flex-col  space-y-6 rounded-xl overflow-auto scrollbar-none ">
+            <div className="mx-auto h-[500px] w-[350px] sm:h-[700px] sm:w-[800px] bg-white flex flex-col  space-y-6 rounded-xl overflow-auto scrollbar-none  ">
               <Accordion type="single" collapsible className="p-4 h-fit ">
                 {items.map((item: Array<data>, index: number) => {
                   if (item.length === 0)

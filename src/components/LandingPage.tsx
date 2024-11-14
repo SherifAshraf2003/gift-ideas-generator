@@ -57,12 +57,11 @@ const LandingPage = () => {
   }, [isLoading, switcher]);
 
   return (
-    <div className=" text-center relative flex min-h-screen flex-col items-center justify-center px-4 py-16 container">
+    <div className=" text-center relative flex min-h-screen mb-32 sm:mb-12 flex-col items-center justify-center px-4 py-16 container">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className=""
       >
         <div className="mb-4 flex items-center justify-center">
           <span className="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-3 py-1 text-sm text-white backdrop-blur-sm">
