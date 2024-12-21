@@ -24,6 +24,9 @@ export async function GET(request: Request) {
       headers: {
         "User-Agent":
           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36",
+        Accept:
+          "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.5",
       },
     });
 
@@ -32,10 +35,10 @@ export async function GET(request: Request) {
     const products: Array<products> = [];
 
     $("div.s-result-item").each((_, element) => {
-      const title = $(element)
-        .find("span.a-size-medium.a-color-base.a-text-normal")
-        .text()
-        .trim();
+      const selector = "a h2 span";
+
+      const title = $(element).find(selector).first().text().trim();
+
       const priceWhole = $(element).find("span.a-price-whole").text().trim();
       const priceFraction = $(element)
         .find("span.a-price-fraction")
@@ -61,6 +64,17 @@ export async function GET(request: Request) {
         });
       }
     });
+
+    // Debug log
+    console.log("Number of products found:", products.length);
+
+    if (products.length === 0) {
+      // Log the HTML structure for debugging
+      console.log(
+        "Sample HTML structure:",
+        $("div.s-result-item").first().html()
+      );
+    }
 
     return NextResponse.json(products);
   } catch (error) {

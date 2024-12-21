@@ -41,6 +41,7 @@ const Login = () => {
         return;
       }
       const res = await axios.post("/api/auth/login", info);
+      console.log(res);
       if (res.data !== null) {
         useUserDataStore.setState({ session: res.data.session.access_token });
         router.push("/");
